@@ -9,6 +9,7 @@ Usar:  python servidor.py
 """
 
 import http.server
+import json
 import socket
 import sys
 import webbrowser
@@ -40,7 +41,20 @@ class Servidor(http.server.ThreadingHTTPServer):
         super().server_bind()
 
 
+def escribir_lista():
+    """Índice de mediciones para cuando el dashboard está publicado en internet:
+    un hosting estático no sabe listar carpetas y lee excel/lista.json. Se rehace
+    al arrancar, así queda al día aunque copies Excel a mano."""
+    carpeta = CARPETA / "excel"
+    if not carpeta.is_dir():
+        return
+    nombres = sorted(a.name for a in carpeta.glob("*.xlsx") if not a.name.startswith("~$"))
+    (carpeta / "lista.json").write_text(json.dumps(nombres, indent=2), encoding="utf-8")
+    print(f"Mediciones encontradas: {len(nombres)}")
+
+
 def main():
+    escribir_lista()
     try:
         servidor = Servidor(("::", PUERTO), partial(SinCache, directory=str(CARPETA)))
     except OSError:

@@ -37,19 +37,34 @@ document.querySelectorAll('.nav button').forEach(b => b.addEventListener('click'
    Cada pocos segundos mira qué archivos hay y su fecha de
    modificación. Si algo cambió, recarga los datos solo.
    ========================================================= */
-const CADA_MS = 4000;
+const CADA_MS = 4000;          // servidor local: los Excel pueden cambiar a cada minuto
+const CADA_MS_PUBLICADO = 60000; // publicado en internet: solo cambia al volver a subirlo
 let firmaAnterior = null;
 let nombresAnteriores = new Set();
+let hayListadoDeCarpeta = true;
 
 function nombreDesdeHref(href) {
   return decodeURIComponent(href.split('?')[0].split('/').filter(Boolean).pop() || '');
 }
 
+const esExcel = n => /\.xlsx$/i.test(n) && !n.startsWith('~$');
+
+// El servidor local sabe listar la carpeta; un hosting estático (Vercel, GitHub
+// Pages) responde 404 a excel/ y hay que leer el índice excel/lista.json.
 async function listarArchivos() {
-  const html = await (await fetch(CARPETA_EXCEL, { cache: 'no-store' })).text();
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  return [...doc.querySelectorAll('a')].map(a => nombreDesdeHref(a.getAttribute('href') || ''))
-    .filter(h => /\.xlsx$/i.test(h) && !h.startsWith('~$'));
+  if (hayListadoDeCarpeta) {
+    try {
+      const r = await fetch(CARPETA_EXCEL, { cache: 'no-store' });
+      if (r.ok) {
+        const doc = new DOMParser().parseFromString(await r.text(), 'text/html');
+        return [...doc.querySelectorAll('a')].map(a => nombreDesdeHref(a.getAttribute('href') || '')).filter(esExcel);
+      }
+    } catch {}
+    hayListadoDeCarpeta = false;
+  }
+  const r = await fetch(CARPETA_EXCEL + 'lista.json', { cache: 'no-store' });
+  if (!r.ok) throw new Error('sin listado de carpeta y sin excel/lista.json');
+  return (await r.json()).filter(esExcel);
 }
 
 async function firmaCarpeta() {
@@ -407,5 +422,9 @@ function ico(n) {
 }
 function escapar(t) { return String(t ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 
-vigilar();
-setInterval(vigilar, CADA_MS);
+// Encadenado en vez de setInterval: con muchas mediciones una ronda puede tardar
+// y así no se montan unas sobre otras ni se castiga al hosting publicado
+(async function ronda() {
+  await vigilar();
+  setTimeout(ronda, hayListadoDeCarpeta ? CADA_MS : CADA_MS_PUBLICADO);
+})();

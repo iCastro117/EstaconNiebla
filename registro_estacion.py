@@ -55,6 +55,7 @@ Excel: Ambos gramos y litros (precisión)
 ═══════════════════════════════════════════════════════════════════════════════
 """
 
+import json
 import os
 import sys
 import time
@@ -169,11 +170,21 @@ def crear_excel(filas, inicio, fin):
     return ruta
 
 
+def escribir_lista():
+    """Índice de mediciones para cuando el dashboard está publicado en internet:
+    un hosting estático no sabe listar carpetas y lee excel/lista.json."""
+    nombres = sorted(a.name for a in CARPETA_SALIDA.glob("*.xlsx")
+                     if not a.name.startswith("~$"))
+    (CARPETA_SALIDA / "lista.json").write_text(json.dumps(nombres, indent=2), encoding="utf-8")
+
+
 def guardar_excel(filas, inicio, fin):
     # Reintenta: OneDrive o el dashboard pueden tener el archivo abierto un instante
     for _ in range(4):
         try:
-            return crear_excel(filas, inicio, fin)
+            ruta = crear_excel(filas, inicio, fin)
+            escribir_lista()
+            return ruta
         except PermissionError:
             time.sleep(0.5)
     print("     (No pude actualizar el Excel: ¿lo tienes abierto en Excel? Ciérralo."
