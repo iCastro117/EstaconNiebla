@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estación de niebla</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<script src="js/lib/xlsx.full.min.js"></script>
+<script src="js/lib/chart.umd.js"></script>
+</head>
+<body>
+
+<div class="app">
+  <!-- ---------- Barra lateral ---------- -->
+  <nav class="side">
+    <div class="logo" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9 7 5 10 5 14.5A7 7 0 0 0 19 14.5C19 10 15 7 12 2z"/></svg>
+    </div>
+    <div class="nav">
+      <button class="on" data-tab="panel">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="3"/><path d="M8 21h8M12 18v3"/></svg></span>
+        Panel
+      </button>
+      <button data-tab="analisis">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M7 16V9M12 16V5M17 16v-7"/></svg></span>
+        Análisis
+      </button>
+    </div>
+    <div class="foto" aria-hidden="true">C</div>
+  </nav>
+
+  <!-- ---------- Contenido ---------- -->
+  <div class="contenido">
+
+    <!-- ===== Pestaña PANEL ===== -->
+    <section class="pestana on" id="tab-panel">
+      <div class="top">
+        <h1>Estación de niebla</h1>
+        <div class="acciones">
+          <div class="vigia" title="Revisa la carpeta excel/ cada pocos segundos"><span class="punto"></span><span class="txt">Vigilando carpeta excel/</span></div>
+        </div>
+      </div>
+      <div id="panel-cuerpo"></div>
+    </section>
+
+    <!-- ===== Pestaña ANÁLISIS ===== -->
+    <section class="pestana" id="tab-analisis">
+      <div class="top">
+        <h1>Análisis de resultados</h1>
+        <div class="acciones">
+          <button class="btn" id="exportar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>
+            Descargar CSV filtrado
+          </button>
+          <div class="vigia" title="Revisa la carpeta excel/ cada pocos segundos"><span class="punto"></span><span class="txt">Vigilando carpeta excel/</span></div>
+        </div>
+      </div>
+      <div id="analisis-cuerpo"></div>
+    </section>
+
+  </div>
+</div>
+
+<div class="aviso" id="aviso"></div>
+
+<script>
+  // Se carga con la hora pegada al nombre para que el navegador nunca reutilice
+  // una copia vieja de app.js (ya pasó: el panel seguía mostrando otras unidades)
+  document.body.appendChild(Object.assign(document.createElement('script'),
+    { src: 'js/app.js?v=' + Date.now() }));
+</script>
+</body>
+</html>

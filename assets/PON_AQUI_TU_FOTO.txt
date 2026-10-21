@@ -1,0 +1,2 @@
+Guarda la foto del panel en esta carpeta con el nombre exacto:  panel.jpg
+(o panel.png). Luego pulsa "Recargar carpeta excel" en el dashboard.

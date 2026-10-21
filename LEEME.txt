@@ -1,0 +1,41 @@
+ESTACION DE NIEBLA - Temperatura, humedad y agua captada
+=========================================================
+
+CARPETAS
+  index.html            Dashboard (se abre con iniciar.bat)
+  css/styles.css        Estilos
+  js/app.js             Logica: lee TODOS los .xlsx de excel/ y la foto de assets/
+  assets/panel.jpg      <-- PON AQUI LA FOTO DE TU PANEL (tambien sirve panel.png)
+  excel/                <-- AQUI VAN TODOS LOS EXCEL. Cada archivo = una medicion
+  registro_estacion.py  Graba lo que manda el Arduino y crea el Excel en excel/
+  estacion_ambiental.ino Codigo del Arduino (subirlo una vez con Arduino IDE)
+  iniciar.bat           Abre el dashboard
+  grabar_medicion.bat   Inicia una grabacion
+
+REQUISITOS (una sola vez)
+  1. Instalar Python desde python.org marcando "Add Python to PATH"
+  2. Abrir cmd y escribir:  pip install pyserial openpyxl
+  3. Subir estacion_ambiental.ino al Arduino con Arduino IDE
+
+GRABAR UNA MEDICION
+  1. Conecta el Arduino por USB (vaso vacio sobre la balanza)
+  2. Doble clic en grabar_medicion.bat
+  3. Deja el PC encendido (sin suspender) el tiempo que quieras
+  4. Desconecta el USB: el Excel aparece solo en la carpeta excel/
+
+VER EL DASHBOARD
+  1. Doble clic en iniciar.bat (se abre en el navegador)
+  2. Deja el dashboard abierto. Cada vez que copies un Excel nuevo a excel/
+     (desde VS Code, el explorador o porque lo genero registro_estacion.py)
+     aparece solo en el dashboard en pocos segundos. No hay que subir nada.
+     Lo mismo con la foto: guarda assets/panel.jpg y se muestra sola.
+  3. Funciona sin internet (solo la fuente de letra se ve distinta sin conexion)
+
+IMPORTANTE
+  - El dashboard NO funciona abriendo index.html con doble clic: el navegador
+    no puede leer carpetas. Usa iniciar.bat, o en VS Code la extension
+    "Live Server" (clic derecho en index.html > Open with Live Server).
+  - La fecha de cada medicion se toma del nombre del archivo
+    (estacion_2026-09-06_19-40.xlsx). Si un Excel tiene otro nombre, puedes
+    corregir la fecha en la pestana Analisis.
+  - Para eliminar una medicion, borra el archivo de la carpeta excel/.

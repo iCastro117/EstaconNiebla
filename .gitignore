@@ -1,0 +1,12 @@
+# Configuracion local de las herramientas, no del proyecto
+.claude/
+.vscode/
+
+# Basura que generan Excel y el script de registro
+~$*.xlsx
+*.tmp
+excel/*.tmp
+
+# Python
+__pycache__/
+*.pyc

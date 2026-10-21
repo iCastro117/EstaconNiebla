@@ -1,0 +1,11 @@
+{
+  "AVG_TEMP": "19.9°C",
+  "AVG_HUMIDITY": "59%",
+  "AVG_LITERS": "0.02 L",
+  "timestamp": "1789403603.475503",
+  "samples": {
+    "temperature": 2,
+    "humidity": 2,
+    "liters": 2
+  }
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Test Panel 3D</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #f5f5f5; }
+    .box { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; }
+    .ok { color: green; font-weight: bold; }
+    .bad { color: red; font-weight: bold; }
+    #panel-test { width: 100%; height: 400px; background: #1a1a2e; border: 1px solid #ccc; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1>Diagnóstico Panel 3D</h1>
+
+  <div class="box">
+    <h2>1. Carga de scripts</h2>
+    <p>THREE: <span id="s-three"></span></p>
+    <p>OrbitControls: <span id="s-orbit"></span></p>
+    <p>CSS2DRenderer: <span id="s-css2d"></span></p>
+  </div>
+
+  <div class="box">
+    <h2>2. Contenedor de prueba</h2>
+    <div id="panel-test"></div>
+  </div>
+
+  <div class="box">
+    <h2>3. Datos del panel</h2>
+    <p id="data-status">Cargando...</p>
+  </div>
+
+  <script src="https://unpkg.com/three@0.168.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.168.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://unpkg.com/three@0.168.0/examples/jsm/renderers/CSS2DRenderer.js"></script>
+
+  <script>
+    // Check THREE
+    setTimeout(() => {
+      document.getElementById('s-three').textContent = typeof THREE !== 'undefined' ? '✓' : '✗';
+      document.getElementById('s-three').className = typeof THREE !== 'undefined' ? 'ok' : 'bad';
+
+      document.getElementById('s-orbit').textContent = (typeof window.OrbitControls !== 'undefined' || (typeof THREE !== 'undefined' && THREE.OrbitControls)) ? '✓' : '✗';
+      document.getElementById('s-orbit').className = (typeof window.OrbitControls !== 'undefined' || (typeof THREE !== 'undefined' && THREE.OrbitControls)) ? 'ok' : 'bad';
+
+      document.getElementById('s-css2d').textContent = (typeof window.CSS2DRenderer !== 'undefined' || (typeof THREE !== 'undefined' && THREE.CSS2DRenderer)) ? '✓' : '✗';
+      document.getElementById('s-css2d').className = (typeof window.CSS2DRenderer !== 'undefined' || (typeof THREE !== 'undefined' && THREE.CSS2DRenderer)) ? 'ok' : 'bad';
+    }, 2000);
+
+    // Check panel data
+    fetch('panel_data.json')
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('data-status').innerHTML = `
+          <span class="ok">✓ Datos cargados</span><br>
+          Temperatura: ${data.AVG_TEMP}<br>
+          Humedad: ${data.AVG_HUMIDITY}<br>
+          Litros: ${data.AVG_LITERS}
+        `;
+      })
+      .catch(e => {
+        document.getElementById('data-status').innerHTML = `<span class="bad">✗ Error: ${e.message}</span>`;
+      });
+  </script>
+</body>
+</html>

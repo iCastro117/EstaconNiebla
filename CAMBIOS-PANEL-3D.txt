@@ -1,0 +1,73 @@
+═══════════════════════════════════════════════════════════════════════════════
+  PANEL 3D - RESUMEN DE CAMBIOS
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ INSTALACIÓN COMPLETADA
+
+La sección "Aquí va la foto de tu panel" ha sido REEMPLAZADA por un Panel 3D
+interactivo que se actualiza automáticamente con tus datos Excel.
+
+───────────────────────────────────────────────────────────────────────────────
+📋 ARCHIVOS CREADOS/MODIFICADOS:
+───────────────────────────────────────────────────────────────────────────────
+
+NUEVOS:
+  ✨ js/panel-3d.js              - Panel 3D interactivo (Three.js)
+  ✨ procesar_excel.py           - Procesa TODOS los Excel files
+  ✨ actualizar_datos.ps1        - Monitor automático de cambios
+  ✨ panel_data.json             - Datos generados (se actualiza solo)
+  ✨ PANEL-3D-README.md          - Documentación completa
+
+MODIFICADOS:
+  📝 index.html                  - Agregado script panel-3d.js
+  📝 js/app.js                   - Reemplazada sección "Aquí va la foto"
+  📝 iniciar.bat                 - Ahora inicia monitor + servidor
+
+───────────────────────────────────────────────────────────────────────────────
+🚀 PARA USAR:
+───────────────────────────────────────────────────────────────────────────────
+
+1. Haz doble clic en: iniciar.bat
+
+   Esto:
+   • Inicia el monitor de datos (PowerShell - minimizado)
+   • Inicia el servidor web (Python)
+   • Abre el navegador en http://localhost:8000
+
+2. Ya está. El panel 3D se actualiza automáticamente cada 5 segundos.
+
+───────────────────────────────────────────────────────────────────────────────
+📊 DATOS PROCESADOS:
+───────────────────────────────────────────────────────────────────────────────
+
+Los datos mostrados en el panel 3D son PROMEDIOS GLOBALES de TODOS tus Excel:
+
+  archivo: excel/estacion_2026-09-13_20-37.xlsx
+  muestras: 2 filas
+
+  Temperatura promedio: 19.9°C
+  Humedad promedio:     59%
+  Litros promedio:      0.02 L
+
+(Cuando agregues más Excel files, estos promedios se recalculan automáticamente)
+
+───────────────────────────────────────────────────────────────────────────────
+🎮 INTERACCIÓN:
+───────────────────────────────────────────────────────────────────────────────
+
+Panel 3D:
+  • Arrastra con mouse para ROTAR
+  • Scroll para ZOOM
+  • Los datos se muestran en tiempo real
+
+───────────────────────────────────────────────────────────────────────────────
+📚 MÁS INFO:
+───────────────────────────────────────────────────────────────────────────────
+
+Lee: PANEL-3D-README.md (en la misma carpeta)
+
+───────────────────────────────────────────────────────────────────────────────
+
+¡Listo! El panel 3D está funcionando. 🌫️✨
+
+═══════════════════════════════════════════════════════════════════════════════

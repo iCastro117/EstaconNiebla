@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Panel 3D - Canvas</title>
+<style>
+  html,body {margin:0;width:100%;height:100%;overflow:hidden;background:#f0f0f0;}
+  #canvas {display:block;background:#f0f0f0;}
+  .overlay {
+    position:absolute;
+    font-family:'Inter',Arial,sans-serif;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.045em;
+    color:#8c2cff;
+    text-shadow:0 0 8px rgba(140,44,255,.22);
+    white-space:nowrap;
+  }
+  .overlay strong {
+    display:block;
+    margin-top:3px;
+    color:#d7b4ff;
+    font-size:17px;
+    text-shadow:0 0 10px rgba(215,180,255,.25);
+  }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div id="labels"></div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const labelsContainer = document.getElementById('labels');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let panelData = {
+  AVG_HUMIDITY: '59%',
+  AVG_TEMP: '19.9°C',
+  AVG_LITERS: '0.02 L'
+};
+
+// Cargar datos
+fetch('panel_data.json')
+  .then(r => r.json())
+  .then(data => {
+    panelData = {
+      AVG_HUMIDITY: data.AVG_HUMIDITY || panelData.AVG_HUMIDITY,
+      AVG_TEMP: data.AVG_TEMP || panelData.AVG_TEMP,
+      AVG_LITERS: data.AVG_LITERS || panelData.AVG_LITERS
+    };
+    animate();
+  })
+  .catch(() => animate());
+
+// Isometric 3D drawing
+function drawPanel(rotation) {
+  ctx.fillStyle = '#f0f0f0';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const centerX = canvas.width / 2;
+  const centerY = canvas.height / 2;
+  const scale = Math.min(canvas.width, canvas.height) / 600;
+
+  // Fondo oscuro sutil
+  ctx.fillStyle = 'rgba(0,0,0,0.02)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Rotación suave
+  ctx.save();
+  ctx.translate(centerX, centerY);
+  ctx.rotate(rotation * 0.1);
+
+  // Dibujar panel con isometría
+  drawIsometricPanel(scale);
+
+  ctx.restore();
+}
+
+function drawIsometricPanel(scale) {
+  // Bambú marrón
+  const bambooColor = '#8B6F47';
+  const lineWidth = 8 * scale;
+
+  ctx.strokeStyle = bambooColor;
+  ctx.lineWidth = lineWidth;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  // Estructura de patas
+  drawLine(-120*scale, 80*scale, -120*scale, -80*scale, bambooColor, lineWidth);
+  drawLine(120*scale, 80*scale, 120*scale, -80*scale, bambooColor, lineWidth);
+  drawLine(-120*scale, -80*scale, -120*scale, -140*scale, bambooColor, lineWidth);
+  drawLine(120*scale, -80*scale, 120*scale, -140*scale, bambooColor, lineWidth);
+
+  // Travesaños
+  drawLine(-120*scale, 80*scale, 120*scale, 80*scale, bambooColor, lineWidth);
+  drawLine(-120*scale, -140*scale, 120*scale, -140*scale, bambooColor, lineWidth);
+
+  // Panel de tela
+  drawTela(-110*scale, -60*scale, 110*scale, -60*scale, 110*scale, 70*scale, -110*scale, 70*scale);
+
+  // Etiquetas superpuestas
+  drawLabel(-80*scale, 100*scale, 'Humedad promedio', panelData.AVG_HUMIDITY);
+  drawLabel(80*scale, -100*scale, 'Temperatura promedio', panelData.AVG_TEMP);
+  drawLabel(-80*scale, -150*scale, 'Litros promedio', panelData.AVG_LITERS);
+}
+
+function drawTela(x1, y1, x2, y2, x3, y3, x4, y4) {
+  // Gradiente de tela
+  const grad = ctx.createLinearGradient(x1, y1, x3, y3);
+  grad.addColorStop(0, '#D8A876');
+  grad.addColorStop(0.5, '#C49A6F');
+  grad.addColorStop(1, '#B88860');
+
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.lineTo(x3, y3);
+  ctx.lineTo(x4, y4);
+  ctx.closePath();
+  ctx.fill();
+
+  // Borde
+  ctx.strokeStyle = '#8B6F47';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Ondulación de tela
+  ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 5; i++) {
+    const y = y1 + (y3 - y1) * i / 5;
+    ctx.beginPath();
+    ctx.moveTo(x1, y);
+    ctx.quadraticCurveTo((x1+x2)/2, y + 5, x2, y);
+    ctx.stroke();
+  }
+}
+
+function drawLine(x1, y1, x2, y2, color, width) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+}
+
+function drawLabel(x, y, title, value) {
+  const el = document.createElement('div');
+  el.className = 'overlay';
+  el.style.left = (canvas.width/2 + x) + 'px';
+  el.style.top = (canvas.height/2 + y) + 'px';
+  el.style.fontSize = '11px';
+  el.innerHTML = `${title}<strong>${value}</strong>`;
+  labelsContainer.innerHTML = '';
+  labelsContainer.appendChild(el);
+}
+
+let t = 0;
+function animate() {
+  t += 0.01;
+  drawPanel(t);
+  requestAnimationFrame(animate);
+}
+
+// Resize handler
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+// Interacción con mouse
+let isDragging = false;
+let lastX = 0;
+canvas.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  lastX = e.clientX;
+});
+canvas.addEventListener('mousemove', (e) => {
+  if (isDragging) {
+    const delta = e.clientX - lastX;
+    t += delta * 0.01;
+    lastX = e.clientX;
+  }
+});
+canvas.addEventListener('mouseup', () => {
+  isDragging = false;
+});
+</script>
+</body>
+</html>
